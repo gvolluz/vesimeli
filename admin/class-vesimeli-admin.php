@@ -21,6 +21,16 @@
  * @author     Gilles Volluz <gvolluz@avansis.ch>
  */
 class Vesimeli_Admin {
+    
+    /**
+	 * The options name to be used in this plugin
+	 *
+	 * @since  	1.0.0
+	 * @access 	private
+	 * @var  	string 		$option_name 	Option name of this plugin
+	 */
+	private $option_name = 'vesimeli';
+    
 
 	/**
 	 * The ID of this plugin.
@@ -99,5 +109,131 @@ class Vesimeli_Admin {
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/vesimeli-admin.js', array( 'jquery' ), $this->version, false );
 
 	}
-
+    
+    /**
+	 * Add an options page under the Settings submenu
+	 *
+	 * @since  1.0.0
+	 */
+	public function add_options_page() {
+	
+		$this->plugin_screen_hook_suffix = add_options_page(
+			__( 'Vesimeli Settings', 'vesimeli' ),
+			__( 'Vesimeli', 'vesimeli' ),
+			'manage_options',
+			$this->plugin_name,
+			array( $this, 'display_options_page' )
+		);
+	
+	}
+    
+    /**
+	 * Render the options page for plugin
+	 *
+	 * @since  1.0.0
+	 */
+	public function display_options_page() {
+		include_once 'partials/vesimeli-admin-display.php';
+	}
+    
+    /**
+	 * Register the settings
+	 *
+	 * @since  1.0.0
+	 */
+    public function register_setting(){
+        // Add a General section
+        add_settings_section(
+            $this->option_name . '_general',
+            __( 'General', 'vesimeli' ),
+            array( $this, $this->option_name . '_general_cb' ),
+            $this->plugin_name
+        );      
+        
+        add_settings_field(
+            $this->option_name . '_position',
+            __( 'Text position', 'vesimeli' ),
+            array( $this, $this->option_name . '_position_cb' ),
+            $this->plugin_name,
+            $this->option_name . '_general',
+            array( 'label_for' => $this->option_name . '_position' )
+        );
+        
+        add_settings_field(
+            $this->option_name . '_day',
+            __( 'Post is outdated after', 'vesimeli' ),
+            array( $this, $this->option_name . '_day_cb' ),
+            $this->plugin_name,
+            $this->option_name . '_general',
+            array( 'label_for' => $this->option_name . '_day' )
+        );
+        
+        register_setting( $this->plugin_name, $this->option_name . '_position', array( $this, $this->option_name . '_sanitize_position' ) );
+        register_setting( $this->plugin_name, $this->option_name . '_day', 'intval' );
+        
+    }
+    
+    /**
+	 * Render the text for the General section
+	 *
+	 * @since  1.0.0
+	 */
+	public function vesimeli_general_cb() {
+		echo '<p>' . __( 'Please change the settings accordingly.', 'vesimeli' ) . '</p>';
+	}
+    
+    /**
+	 * Render the text for the Media Types section
+	 *
+	 * @since  1.0.0
+	 */
+	public function vesimeli_mediatypes_cb() {
+		echo '<p>' . __( 'Manage here your media types', 'vesimeli' ) . '</p>';
+	}
+    
+    /**
+	 * Render the radio input field for position option
+	 *
+	 * @since  1.0.0
+	 */
+	public function vesimeli_position_cb() {
+		$position = get_option( $this->option_name . '_position' );
+		?>
+			<fieldset>
+				<label>
+					<input type="radio" name="<?php echo $this->option_name . '_position' ?>" id="<?php echo $this->option_name . '_position' ?>" value="before" <?php checked( $position, 'before' ); ?>>
+					<?php _e( 'Before the content', 'vesimeli' ); ?>
+				</label>
+				<br>
+				<label>
+					<input type="radio" name="<?php echo $this->option_name . '_position' ?>" value="after" <?php checked( $position, 'after' ); ?>>
+					<?php _e( 'After the content', 'vesimeli' ); ?>
+				</label>
+			</fieldset>
+            <?php
+	}
+    
+    /**
+	 * Render the treshold day input for this plugin
+	 *
+	 * @since  1.0.0
+	 */
+	public function vesimeli_day_cb() {
+        $day = get_option( $this->option_name . '_day' );
+		echo '<input type="text" name="' . $this->option_name . '_day' . '" id="' . $this->option_name . '_day' . '" value="'.$day.'"> '. __( 'days', 'vesimeli' );
+	}   
+    
+    /**
+	 * Sanitize the text position value before being saved to database
+	 *
+	 * @param  string $position $_POST value
+	 * @since  1.0.0
+	 * @return string           Sanitized value
+	 */
+	public function vesimeli_sanitize_position( $position ) {
+		if ( in_array( $position, array( 'before', 'after' ), true ) ) {
+	        return $position;
+	    }
+	}    
+    
 }
