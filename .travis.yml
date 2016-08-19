@@ -2,12 +2,13 @@ language: php
 
 notifications:
   email:
-    on_success: never
+    on_success: change
     on_failure: change
 
 branches:
   only:
     - master
+    - gv-1
 
 php:
   - 5.3
