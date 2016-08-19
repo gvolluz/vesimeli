@@ -9,14 +9,14 @@
  * that starts the plugin.
  *
  * @link              https://plus.google.com/u/0/+GillesVolluzGasdia
- * @since             1.0.0
+ * @since             0.0.1
  * @package           Vesimeli
  *
  * @wordpress-plugin
  * Plugin Name:       Vesimeli
  * Plugin URI:        https://www.avansis.ch/Vesimeli
  * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
- * Version:           1.0.0
+ * Version:           0.0.1
  * Author:            Gilles Volluz
  * Author URI:        https://plus.google.com/u/0/+GillesVolluzGasdia
  * License:           GPL-2.0+
